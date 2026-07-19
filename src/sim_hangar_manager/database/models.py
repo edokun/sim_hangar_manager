@@ -1,5 +1,5 @@
-from datetime import datetime
-from enum import Enum
+from datetime import datetime, timezone
+from enum import StrEnum
 from typing import List, Optional
 from sqlalchemy import String, Float, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -8,7 +8,8 @@ class Base(DeclarativeBase):
     pass
 
 # --- ENUMs  ---
-class AircraftCategory(str, Enum):
+# -- ENUMS for aircraft_models table --
+class AircraftCategory(StrEnum):
     SINGLE_PISTON_ENGINE = "SINGLE PISTON ENGINE"
     MULTI_PISTON_ENGINE = "MULTI PISTON ENGINE"
     SINGLE_JET = "SINGLE_JET"
@@ -18,66 +19,96 @@ class AircraftCategory(str, Enum):
     HELICOPTER = "HELICOPTER"
     OTHER = "OTHER"
 
-class AircraftType(str, Enum):
+class AircraftType(StrEnum):
     AIRCRAFT = "AIRCRAFT"
     HELICOPTER = "HELICOPTER"
     GLIDER = "GLIDER"
     OTHER = "OTHER"
 
-class AircraftOrigin(str, Enum):
+class ModuleType(StrEnum):
     FREEWARE = "FREEWARE"
     PAYWARE = "PAYWARE"
     DEFAULT = "DEFAULT"
 
-class OriginStore(str, Enum):
-    MARKETPLACE = "MARKETPLACE"
+class Store(StrEnum):
+    AEROSOFT = "AEROSOFT"
+    MARKETPLACE = "IN GAME MARKETPLACE"
     JUST_FLIGHT = "JUST_FLIGHT"
     SIMMARKET = "SIMMARKET"
     ORBX = "ORBX"
     CONTRAIL = "CONTRAIL"
     INIBUILDS = "INIBUILDS"
     DEVELOPER_SITE = "DEVELOPER_SITE"
+    FLIGHTSIM_TO = "FLIGHTSIM_TO"
+    FBW = "FBW" # Fly By Wire Installer
+    HEADWIND = "HEADWIND" # Headwind Simulations (Installer for different modules)
     OTHER = "OTHER"
 
-class FlightType(str, Enum):
+# The Enum is listing one record only as currently this app only supports MSFS
+class Simulator(StrEnum):
+    MSFS = "MSFS"
+
+class SimulatorCompatibility(StrEnum):
+    MSFS_2020 = "MSFS 2020"
+    MSFS_2024_COMPATIBLE = "MSFS 2024 COMPATIBLE"
+    MSFS_2024_NATIVE = "MSFS 2024 NATIVE"
+    MSFS_DUAL_VERSIONS = "MSFS DUAL VERSIONS" # The developer has 2 different installer/packages for each version
+
+# -- ENUMS for aircrafts table --
+class FlightType(StrEnum):
     CARGO = "CARGO"
     PASSENGER = "PASSENGER"
     MILITARY = "MILITARY"
 
-class Simulator(str, Enum):
-    MSFS = "MSFS"
-    XP = "X-PLANE"
-    P3D = "PREPAR3D"
-    OTHER = "OTHER"
-
+# --- Model Objects for the database tables ---
 # This is the table that maps the actual aircraft modules, (freeware, paid, default, etc.)
 class AircraftModel(Base):
     __tablename__ = "aircraft_models"
 
+    # Basic required fields for the aircraft model
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     module_name: Mapped[str] = mapped_column(String(100)) # Name of the module like folder name or package name
     name: Mapped[str] = mapped_column(String(100)) # Name of the aircraft model like "Cessna 172 Skyhawk" or "Boeing 747-8"
     icao_code: Mapped[str] = mapped_column(String(4), default="UNKN") # ICAO code for the aircraft model
-    developer: Mapped[Optional[str]] = mapped_column(String(100)) # Name of the developer or company that created the aircraft model
+    developer: Mapped[str] = mapped_column(String(100)) # Name of the developer or company that created the aircraft model
+    type: Mapped[str] = mapped_column(String(20)) # ENUM (Aircraft, Helicopter, Glider, etc.)
+    category: Mapped[str] = mapped_column(String(20)) # ENUM Category of the aircraft model (Single Engine, Multi Engine, Jet, etc.)
+    simulator: Mapped[str] = mapped_column(String(20)) # simulator name like "MSFS", "X-Plane", "Prepar3D", etc.
     
-    category: Mapped[Optional[str]] = mapped_column(String(20)) # ENUM Category of the aircraft model (Single Engine, Multi Engine, Jet, etc.)
-    type: Mapped[Optional[str]] = mapped_column(String(20)) # ENUM (Aircraft, Helicopter, Glider, etc.)
-    origin: Mapped[Optional[str]] = mapped_column(String(100)) # ENUM (freeware, payware, default)
-    origin_store: Mapped[Optional[str]] = mapped_column(String(100)) # name of the store, ENUM of known stores
-    
+    # Module specific optional fields
+    model_data: Mapped[Optional[str]] = mapped_column(String(1000)) # additional information like aircraft performance, limitations, etc.
+    simulator_compatibility: Mapped[Optional[str]] = mapped_column(String(50)) # Indicates if the module is compatible with specific simulator versions like "MSFS 2020", "MSFS 2024", etc.
+
+    # Developer specific optional fields
+    module_type: Mapped[Optional[str]] = mapped_column(String(100)) # ENUM ModuleType
+    store: Mapped[Optional[str]] = mapped_column(String(100)) # ENUM Store
     developer_url: Mapped[Optional[str]] = mapped_column(String(100)) # URL of the developer's website
-    version: Mapped[Optional[str]] = mapped_column(String(20)) # Module/mod version (Obtained from the aircraft's manifest file)
     
-    model_metadata: Mapped[Optional[str]] = mapped_column(String(1000)) # additional information like aircraft performance, limitations, etc.
+    # user specific optional fields
     notes: Mapped[Optional[str]] = mapped_column(String(500)) # additional notes the user can add about the aircraft model
     rating: Mapped[Optional[int]] = mapped_column(Integer, default=0) # rating of the aircraft model (1-5 stars)
-    simulator: Mapped[Optional[str]] = mapped_column(String(20)) # simulator name like "MSFS", "X-Plane", "Prepar3D", etc.
 
+    # Module Metadata fields
+    version: Mapped[Optional[str]] = mapped_column(String(20)) # Module/mod version (Obtained from the aircraft's manifest file)
+    module_file_location_1: Mapped[Optional[str]] = mapped_column(String(1000)) # Path to the module's folder or package file
+    module_file_location_2: Mapped[Optional[str]] = mapped_column(String(1000)) # Path to the module's folder or package file (For cases where the module has 2 different pacakges for MSFS 2020 and MSFS 2024, for example)
+    model_metadata: Mapped[Optional[str]] = mapped_column(String(1000)) # additional information of the module.
+    is_active: Mapped[bool] = mapped_column(default=True) # Flag to indicate if the aircraft model/module is active or not
+    
+    # Timestamps passed as callables (lambda) to evaluate the actual time on row insertion/update
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc)) 
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
+    
 
+    # Relationship: One AircraftModel can have multiple specific Aircraft instances
     aircrafts: Mapped[List["Aircraft"]] = relationship(back_populates="model")
 
     def __repr__(self) -> str:
-        return f"<AircraftModel(Nombre={self.name}, Desarrollador={self.developer})>"
+        return f"<AircraftModel(Name={self.name}, Developer={self.developer}, ICAO={self.icao_code}, Type={self.type}, Category={self.category}, Simulator={self.simulator})>"
 
 # There can be multiple instances of the same aircraft model, each with its own unique tail number and flight hours.
 class Aircraft(Base):
@@ -109,7 +140,7 @@ class Flight(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     aircraft_id: Mapped[int] = mapped_column(ForeignKey("aircrafts.id"))
-    flight_date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow) # Date and time of the flight
+    flight_date: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc)) # Date and time of the flight
     origin_airport: Mapped[str] = mapped_column(String(4))
     destination_airport: Mapped[str] = mapped_column(String(4))
     duration: Mapped[int] = mapped_column(Integer, default=0) # Duration of the flight in minutes

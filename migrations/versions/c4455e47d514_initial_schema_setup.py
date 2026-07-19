@@ -1,8 +1,8 @@
-"""create init tables
+"""initial_schema_setup
 
-Revision ID: 3fe0e23f9471
+Revision ID: c4455e47d514
 Revises: 
-Create Date: 2026-07-18 21:36:17.197498
+Create Date: 2026-07-19 20:31:49.791976
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3fe0e23f9471'
+revision: str = 'c4455e47d514'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,17 +26,24 @@ def upgrade() -> None:
     sa.Column('module_name', sa.String(length=100), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('icao_code', sa.String(length=4), nullable=False),
-    sa.Column('developer', sa.String(length=100), nullable=True),
-    sa.Column('category', sa.String(length=20), nullable=True),
-    sa.Column('type', sa.String(length=20), nullable=True),
-    sa.Column('origin', sa.String(length=100), nullable=True),
-    sa.Column('origin_store', sa.String(length=100), nullable=True),
+    sa.Column('developer', sa.String(length=100), nullable=False),
+    sa.Column('type', sa.String(length=20), nullable=False),
+    sa.Column('category', sa.String(length=20), nullable=False),
+    sa.Column('simulator', sa.String(length=20), nullable=False),
+    sa.Column('model_data', sa.String(length=1000), nullable=True),
+    sa.Column('simulator_compatibility', sa.String(length=50), nullable=True),
+    sa.Column('module_type', sa.String(length=100), nullable=True),
+    sa.Column('store', sa.String(length=100), nullable=True),
     sa.Column('developer_url', sa.String(length=100), nullable=True),
-    sa.Column('version', sa.String(length=20), nullable=True),
-    sa.Column('model_metadata', sa.String(length=1000), nullable=True),
     sa.Column('notes', sa.String(length=500), nullable=True),
     sa.Column('rating', sa.Integer(), nullable=True),
-    sa.Column('simulator', sa.String(length=20), nullable=True),
+    sa.Column('version', sa.String(length=20), nullable=True),
+    sa.Column('module_file_location_1', sa.String(length=1000), nullable=True),
+    sa.Column('module_file_location_2', sa.String(length=1000), nullable=True),
+    sa.Column('model_metadata', sa.String(length=1000), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('aircrafts',
