@@ -1,4 +1,4 @@
-from sim_hangar_manager.database.repository import AircraftModelRepository
+from sim_hangar_manager.database.repository.aircraft_model_repository import AircraftModelRepository
 from sim_hangar_manager.database.models import AircraftModel
 from sim_hangar_manager.mappers.object_mapper import ObjectMapper
 

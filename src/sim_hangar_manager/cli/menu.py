@@ -1,5 +1,5 @@
 from sim_hangar_manager.database.connection import SessionLocal
-from sim_hangar_manager.database.repository import AircraftModelRepository
+from sim_hangar_manager.database.repository.aircraft_model_repository import AircraftModelRepository
 from sim_hangar_manager.cli.forms.create_aircraft_model_form import prompt_add_aircraft_model
 from sim_hangar_manager.service.aircraft_model_service import AircraftModelService
 
