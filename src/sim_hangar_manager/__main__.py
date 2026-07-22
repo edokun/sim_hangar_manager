@@ -1,9 +1,7 @@
-from sim_hangar_manager.cli.menu import run_create_aircraft_model_flow
+from sim_hangar_manager.cli.menu import main_menu
 
 def main():
-    print("Starting Sim Hangar Manager...\n")
-    
-    run_create_aircraft_model_flow()
+    main_menu()
 
 if __name__ == "__main__":
     main()

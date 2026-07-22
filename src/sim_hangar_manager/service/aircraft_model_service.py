@@ -23,7 +23,7 @@ class AircraftModelService:
         """
         return self.repository.get(skip=skip, limit=limit, include_inactive=include_inactive)
     
-    def get_aircraft_model_by_id(self, model_id: int) -> AircraftModel:
+    def get_by_id(self, model_id: int) -> AircraftModel:
         """
         Retrieve an aircraft model by its ID.
         """

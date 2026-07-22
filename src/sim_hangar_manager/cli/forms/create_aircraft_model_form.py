@@ -1,3 +1,4 @@
+from rich.console import Console
 from InquirerPy import inquirer
 from InquirerPy.validator import EmptyInputValidator
 from sim_hangar_manager.database.enums import (
@@ -9,15 +10,18 @@ from sim_hangar_manager.database.enums import (
     SimulatorCompatibility
 )
 
+console = Console()
+
 def prompt_add_aircraft_model() -> getattr:
     """
     Displays an interactive terminal wizard to gather raw aircraft configuration inputs.
     Does not interact with database engines or sessions directly.
     """
-    print("\n=============================================")
-    print("      REGISTER NEW AIRCRAFT MODULE / ADDON    ")
-    print("  (Press Ctrl+C at any time to cancel & exit) ")
-    print("=============================================\n")
+
+    console.print("[bold cyan]==========================================================[/bold cyan]")
+    console.print("[bold white]        REGISTER NEW AIRCRAFT MODULE / ADDON              [/bold white]")
+    console.print("[bold white]  (Press Ctrl+C at any time to cancel & return to menu)  [/bold white]")
+    console.print("[bold cyan]==========================================================[/bold cyan]")
     
     try:
         name = inquirer.text(
