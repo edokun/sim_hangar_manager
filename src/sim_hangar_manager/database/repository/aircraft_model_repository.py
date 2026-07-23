@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from sim_hangar_manager.database.models import AircraftModel
 
+
 class AircraftModelRepository:
     def __init__(self, db: Session):
         self.db = db
@@ -12,20 +13,22 @@ class AircraftModelRepository:
         """
         self.db.add(aircraft_model)
         self.db.commit()
-        self.db.refresh(aircraft_model) # Refreshes to populate the autoincremented ID
+        self.db.refresh(aircraft_model)  # Refreshes to populate the autoincremented ID
         return aircraft_model
-    
-    def get(self, skip: int = 0, limit: int = 100, include_inactive: bool = False) -> List[AircraftModel]:
+
+    def get(
+        self, skip: int = 0, limit: int = 100, include_inactive: bool = False
+    ) -> List[AircraftModel]:
         """
         Retrieves a list of aircraft modules from the database.
         By default, it filters out inactive modules unless include_inactive is set to True.
         """
         query = self.db.query(AircraftModel)
-        
+
         # Apply filter only if we don't want to include inactive records
         if not include_inactive:
             query = query.filter(AircraftModel.is_active == True)
-            
+
         return query.offset(skip).limit(limit).all()
 
     def get_by_id(self, model_id: int) -> Optional[AircraftModel]:
@@ -43,13 +46,13 @@ class AircraftModelRepository:
         db_model = self.get_by_id(model_id)
         if not db_model:
             return None
-            
+
         # Dynamically loop over dictionary fields and set attributes on the model object
         for key, value in updated_data.items():
             # Safety check: prevent overriding internal primary key fields accidentally
             if hasattr(db_model, key) and key != "id":
                 setattr(db_model, key, value)
-                
+
         self.db.commit()
         self.db.refresh(db_model)
         return db_model
@@ -65,7 +68,7 @@ class AircraftModelRepository:
             self.db.commit()
             self.db.refresh(db_model)
         return db_model
-    
+
     def update_rating(self, model_id: int, new_rating: int) -> Optional[AircraftModel]:
         """
         Updates the rating of a specific aircraft module.
@@ -89,7 +92,7 @@ class AircraftModelRepository:
             self.db.commit()
             return True
         return False
-    
+
     def enable(self, model_id: int) -> bool:
         """
         Enable an aircraft model by turning on the is_active flag.
