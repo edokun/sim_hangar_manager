@@ -4,14 +4,15 @@ from enum import StrEnum
 # --- ENUM Objects for the database tables ---
 # -- ENUMS for aircraft_models table --
 class AircraftCategory(StrEnum):
-    SINGLE_PISTON_ENGINE = "SINGLE PISTON ENGINE"
-    MULTI_PISTON_ENGINE = "MULTI PISTON ENGINE"
+    SINGLE_PISTON_ENGINE = "SINGLE_PISTON_ENGINE"
+    MULTI_PISTON_ENGINE = "MULTI_PISTON_ENGINE"
     SINGLE_JET = "SINGLE_JET"
-    MULTI_JET = "MULTI_JET"
+    MULTI_JET = "MULTI JET"
     SINGLE_TURBOPROP = "SINGLE_TURBOPROP"
     MULTI_TURBOPROP = "MULTI_TURBOPROP"
     HELICOPTER = "HELICOPTER"
     OTHER = "OTHER"
+    UNKNOWN = "UNKNOWN"
 
 
 class AircraftType(StrEnum):
@@ -19,6 +20,7 @@ class AircraftType(StrEnum):
     HELICOPTER = "HELICOPTER"
     GLIDER = "GLIDER"
     OTHER = "OTHER"
+    UNKNOWN = "UNKNOWN"
 
 
 class ModuleType(StrEnum):
@@ -29,7 +31,7 @@ class ModuleType(StrEnum):
 
 class Store(StrEnum):
     AEROSOFT = "AEROSOFT"
-    MARKETPLACE = "IN GAME MARKETPLACE"
+    MARKETPLACE = "MARKETPLACE"
     JUST_FLIGHT = "JUST_FLIGHT"
     SIMMARKET = "SIMMARKET"
     ORBX = "ORBX"
@@ -48,11 +50,11 @@ class Simulator(StrEnum):
 
 
 class SimulatorCompatibility(StrEnum):
-    MSFS_2020 = "MSFS 2020"
-    MSFS_2024_COMPATIBLE = "MSFS 2024 COMPATIBLE"
-    MSFS_2024_NATIVE = "MSFS 2024 NATIVE"
-    # The developer has 2 different installer/packages for each version
-    MSFS_DUAL_VERSIONS = "MSFS DUAL VERSIONS"
+    MSFS_2020 = "MSFS_2020"
+    MSFS_2024_COMPATIBLE = "MSFS_2024_COMPATIBLE"
+    MSFS_2024_NATIVE = "MSFS_2024_NATIVE"
+    # The developer has 2 different installer/packages for each MSFS version
+    MSFS_DUAL_VERSIONS = "MSFS_DUAL_VERSIONS"
 
 
 # -- ENUMS for aircrafts table --
