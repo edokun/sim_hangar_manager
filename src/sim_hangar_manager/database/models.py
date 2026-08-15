@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import List, Optional
-from sqlalchemy import String, Float, DateTime, ForeignKey, Integer
+from sqlalchemy import String, Float, DateTime, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -18,7 +18,7 @@ class AircraftModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     # Name of the module like folder name or package name
     module_name: Mapped[str] = mapped_column(String(100))
-    # Name of the aircraft model like "Cessna 172 Skyhawk" or "Boeing 747-8"
+    # Name of the aircraft model like "Cessna 172 SkyHawk" or "Boeing 747-8"
     name: Mapped[str] = mapped_column(String(100))
     # ICAO code for the aircraft model
     icao_code: Mapped[str] = mapped_column(String(4), default="UNKN")
@@ -28,7 +28,7 @@ class AircraftModel(Base):
     type: Mapped[str] = mapped_column(String(20))
     # ENUM Category of the aircraft model (Single Engine, Multi Engine, etc.)
     category: Mapped[str] = mapped_column(String(20))
-    # simulator name like "MSFS", "X-Plane", "Prepar3D", etc.
+    # simulator name like "MSFS", "X-Plane", "P3D", etc.
     simulator: Mapped[str] = mapped_column(String(20))
 
     # -- Module specific optional fields --
@@ -57,7 +57,7 @@ class AircraftModel(Base):
     # Path to the module's folder or package file
     module_file_location_1: Mapped[Optional[str]] = mapped_column(String(1000)) 
     # Path to the module's folder or package file
-    # (For cases where addon has 2 different pacakges for MSFS 2020 and MSFS 2024, for example)
+    # (For cases where addon has 2 different packages for MSFS 2020 and MSFS 2024, for example)
     module_file_location_2: Mapped[Optional[str]] = mapped_column(String(1000))
     # additional information of the module/addon
     model_metadata: Mapped[Optional[str]] = mapped_column(String(1000))
@@ -74,7 +74,11 @@ class AircraftModel(Base):
     )
 
     # Relationship: One AircraftModel can have multiple specific Aircraft instances
-    aircrafts: Mapped[List["Aircraft"]] = relationship(back_populates="model")
+    aircraft: Mapped[List["Aircraft"]] = relationship(back_populates="model")
+
+    __table_args__ = (
+        UniqueConstraint("simulator", "module_name", name="uq_simulator_module_name"),
+    )
 
     def __repr__(self) -> str:
         return f"<AircraftModel(Name={self.name}, Developer={self.developer}, ICAO={self.icao_code}, Type={self.type}, Category={self.category}, Simulator={self.simulator})>"
@@ -82,7 +86,7 @@ class AircraftModel(Base):
 
 # Instance of each module/addon
 class Aircraft(Base):
-    __tablename__ = "aircrafts"
+    __tablename__ = "aircraft"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     # Unique tail number for the aircraft
@@ -91,7 +95,7 @@ class Aircraft(Base):
     # Some airplanes have different variants like "Classic", "NG", "X", etc.
     variant: Mapped[Optional[str]] = mapped_column(String(50))
     # Some airplanes have different engine options
-    enginevariant: Mapped[Optional[str]] = mapped_column(String(50))
+    engine_variant: Mapped[Optional[str]] = mapped_column(String(50))
     # ICAO code of the home airport for the aircraft
     home_airport: Mapped[Optional[str]] = mapped_column(String(4))
     # ICAO code of the current location of the aircraft
@@ -105,7 +109,7 @@ class Aircraft(Base):
     airline_icao: Mapped[Optional[str]] = mapped_column(String(4))
     # Name of the airline for the aircraft
     airline_name: Mapped[Optional[str]] = mapped_column(String(100))
-    model: Mapped["AircraftModel"] = relationship(back_populates="aircrafts")
+    model: Mapped["AircraftModel"] = relationship(back_populates="aircraft")
     flights: Mapped[List["Flight"]] = relationship(back_populates="aircraft")
 
     def __repr__(self) -> str:
@@ -116,7 +120,7 @@ class Flight(Base):
     __tablename__ = "flight_logs"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    aircraft_id: Mapped[int] = mapped_column(ForeignKey("aircrafts.id"))
+    aircraft_id: Mapped[int] = mapped_column(ForeignKey("aircraft.id"))
     flight_date: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))  # Date and time of the flight
     origin_airport: Mapped[str] = mapped_column(String(4))
     destination_airport: Mapped[str] = mapped_column(String(4))

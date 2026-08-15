@@ -1,6 +1,7 @@
 from typing import List
 from rich.console import Console
 from rich.table import Table
+from InquirerPy import inquirer
 from sim_hangar_manager.database.models import AircraftModel
 
 console = Console()
@@ -9,6 +10,8 @@ def display_aircraft_models_table(models: List[AircraftModel]) -> None:
     """
     Renders a stylized Rich table displaying all active aircraft models.
     """
+    console.clear()
+
     if not models:
         console.print("\n[bold yellow]No aircraft modules registered in your hangar yet.[/bold yellow]\n")
         return
@@ -46,3 +49,5 @@ def display_aircraft_models_table(models: List[AircraftModel]) -> None:
     console.print("\n")
     console.print(table)
     console.print(f"[dim]Total registered modules: {len(models)}[/dim]\n")
+
+    inquirer.text(message="Press Enter to Return to main menu...").execute()

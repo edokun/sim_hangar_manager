@@ -49,7 +49,7 @@ def show_aircraft_model_details(model: AircraftModel):
     if model.notes:
         table_local.add_row("Notes:", f"[italic]{model.notes}[/italic]")
 
-    # Renderizamos las tablas en pantalla de forma ordenada
+    # Render the tables
     console.print("\n[bold]⚙️ Core Identifiers[/bold]")
     console.print(table_core)
     console.print("\n[bold]📊 Specifications[/bold]")

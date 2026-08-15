@@ -3,6 +3,7 @@ from sim_hangar_manager.database.repository.aircraft_model_repository import (
 )
 from sim_hangar_manager.database.models import AircraftModel
 from sim_hangar_manager.mappers.object_mapper import ObjectMapper
+from sim_hangar_manager.exceptions.exceptions import AircraftModuleAlreadyExistsError
 
 
 class AircraftModelService:
@@ -13,10 +14,20 @@ class AircraftModelService:
     def __init__(self, repository: AircraftModelRepository):
         self.repository = repository
 
-    def create_aircraft_model(self, raw_data: dict) -> AircraftModel:
+    def register_aircraft_model(self, raw_data: dict) -> AircraftModel:
         """
-        Create a new aircraft model.
+        Create a new aircraft model, first checks a module matching 
+        the name and simulator does nor exist before inserting into DB
         """
+        module_name = raw_data.get("module_name")
+        simulator = raw_data.get("simulator", "MSFS")
+
+        # 1. Check for duplicates
+        existing = self.repository.get_by_module_and_simulator(module_name, simulator)
+        if existing:
+            raise AircraftModuleAlreadyExistsError(module_name=module_name, simulator=simulator)
+
+        # 2. Map into object and persist into DB
         aircraft_entity = ObjectMapper.to_aircraft_model(raw_data)
         return self.repository.create(aircraft_entity)
 

@@ -5,12 +5,14 @@ from rich.console import Console
 
 from InquirerPy.base.control import Choice
 from sim_hangar_manager.cli.views.aircraft_model_view import show_aircraft_model_details
+from sim_hangar_manager.cli.views.scan_view import ScanAndImportView
 
 from sim_hangar_manager.database.connection import SessionLocal
 from sim_hangar_manager.database.repository.aircraft_model_repository import (
     AircraftModelRepository,
 )
 from sim_hangar_manager.service.aircraft_model_service import AircraftModelService
+from sim_hangar_manager.service.scanner_service import HangarScannerService
 from sim_hangar_manager.cli.forms.create_aircraft_model_form import (
     prompt_add_aircraft_model,
 )
@@ -106,23 +108,38 @@ def handle_view_aircraft_model_details():
         db.close()
 
 
+def handle_module_scan_option():
+    db = SessionLocal()
+    try:
+        aircraft_model_service = get_service(db)
+        scanner_service = HangarScannerService()
+        view = ScanAndImportView(scanner_service, aircraft_model_service)
+        view.run()
+    except Exception as e:
+            print(f"\n[ERROR] Failed to scan modules: {e}\n")
+    finally:
+        db.close()
+
+        
 def main_menu():
     """
     Main interactive loop for the CLI application.
     """
     while True:
+        console.clear()
         console.print("[bold cyan]=============================================[/bold cyan]")
         console.print("[bold white]        SIM HANGAR MANAGER - CLI              [/bold white]")
         console.print("[bold cyan]=============================================[/bold cyan]")
 
         try:
             choice = inquirer.select(
-                message="Select an operational task:",
+                message="Select an option:",
                 choices=[
                     "1. Register New Aircraft Module",
                     "2. List All Hangar Modules",
                     "3. View Aircraft Module Details",
-                    "4. Exit System",
+                    "4. Scan folder for modules",
+                    "5. Exit System",
                 ],
             ).execute()
 
@@ -133,6 +150,8 @@ def main_menu():
             elif choice.startswith("3"):
                 handle_view_aircraft_model_details()
             elif choice.startswith("4"):
+                handle_module_scan_option()
+            elif choice.startswith("5"):
                 console.print("\n[bold blue]Closing Hangar Control... Have a great flight! ✈[/bold blue]\n")
                 sys.exit(0)
 

@@ -11,7 +11,7 @@ def test_can_scan_returns_false_for_empty_or_non_existent_directory(tmp_path: Pa
     non_existent_path = tmp_path / "does_not_exist"
     assert scanner.can_scan(non_existent_path) is False
 
-    # Case 2: Emppty Path
+    # Case 2: Empty Path
     empty_dir = tmp_path / "empty_folder"
     empty_dir.mkdir()
     assert scanner.can_scan(empty_dir) is False
@@ -42,7 +42,7 @@ def test_valid_aircraft_package_detection(tmp_path: Path):
     # Test
     results = scanner.scan_directory(tmp_path)
     assert len(results) == 1
-    assert results[0]["name"] == "Piper PA-24 Comanche 250"
+    assert results[0]["name"] == "Piper PA-24 Comanche 250 - A2A Pa24"
     assert results[0]["developer"] == "A2A Simulations"
     assert results[0]["simulator"] == "MSFS"
 

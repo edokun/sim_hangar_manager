@@ -15,6 +15,12 @@ dependencies = [
     "rich (>=15.0.0,<16.0.0)"
 ]
 
+[tool.poetry]
+packages = [{include = "sim_hangar_manager", from = "src"}]
+
+[tool.poetry.scripts]
+sim_hangar_manager = "sim_hangar_manager.__main__:main"
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

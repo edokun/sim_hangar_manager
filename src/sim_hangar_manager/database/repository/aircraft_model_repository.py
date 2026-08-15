@@ -13,7 +13,7 @@ class AircraftModelRepository:
         """
         self.db.add(aircraft_model)
         self.db.commit()
-        self.db.refresh(aircraft_model)  # Refreshes to populate the autoincremented ID
+        self.db.refresh(aircraft_model)  # Refreshes to populate the auto-incremented ID
         return aircraft_model
 
     def get(
@@ -37,6 +37,16 @@ class AircraftModelRepository:
         Returns None if the record context does not exist.
         """
         return self.db.query(AircraftModel).filter(AircraftModel.id == model_id).first()
+
+    def get_by_module_and_simulator(self, module_name: str, simulator: str) -> Optional[AircraftModel]:
+        return (
+            self.db.query(AircraftModel)
+            .filter(
+                AircraftModel.module_name == module_name,
+                AircraftModel.simulator == simulator
+            )
+            .first()
+        )
 
     def update(self, model_id: int, updated_data: dict) -> Optional[AircraftModel]:
         """

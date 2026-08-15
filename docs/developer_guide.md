@@ -44,7 +44,7 @@ poetry run alembic revision --autogenerate -m "migration message"
 # Apply all pending migrations (updates DB schema to the latest changes)
 poetry run alembic upgrade head
 
-# Revert changes to previous version (Specifing concrete revision ID)
+# Revert changes to previous version (Specifying concrete revision ID)
 poetry run alembic downgrade <revision_id>
 
 # See migration history
@@ -56,7 +56,7 @@ poetry run alembic current
 
 ### DB Operations during development
 
-To recreate the DB first delete the DB file kakeibo.db, then run
+To recreate the DB first delete the DB file hangar_manager.db, then run
 ```Python
 # Recreate clean DB from migrations (or on a fresh install)
 poetry run alembic upgrade head
@@ -67,6 +67,31 @@ poetry run alembic upgrade head
 # Execute a script alone (example)
 poetry run python tests/manual_create_db.py
 
-# Execute a module of the application (Like a cli app)
-poetry run python -m kakeibo.cli
+# Run the application
+# Option 1: using the main script
+poetry run sim_hangar_manager
+
+# Option 2: as a standalone python script
+poetry run python -m sim_hangar_manager
+```
+
+### Execute Tests
+```Python
+# Execute all tests
+poetry run pytest
+
+# Execute all tests verbose
+poetry run pytest -v
+
+# Execute all tests show outputs
+poetry run pytest -s
+
+# Execute specific test file
+poetry run pytest tests/test_scanner.py
+
+# Execute specific test function by name
+poetry run pytest -k "is_valid_aircraft"
+
+# Execute Pytest and stop with first failure (fail-fast)
+poetry run pytest -x
 ```
