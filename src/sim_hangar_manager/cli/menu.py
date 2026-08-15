@@ -84,7 +84,7 @@ def handle_view_aircraft_model_details():
             Choice(value=m.id, name=f"{m.name} ({m.developer})") for m in modules
         ]
 
-        # Agregamos opción de cancelar
+        # Add option to cancel and back to menu
         module_choices.append(Choice(value=None, name="⬅️  Back to Main Menu"))
 
         selected_id = inquirer.select(
@@ -94,12 +94,10 @@ def handle_view_aircraft_model_details():
         if selected_id is None:
             return
 
-        # Asumiendo que tu servicio tiene un método get_by_id o similar
         selected_model = service.get_by_id(selected_id)
 
         if selected_model:
             show_aircraft_model_details(selected_model)
-            # Pausa para que el usuario pueda leer antes de regresar al menú
             input("Press Enter to return to the main menu...")
 
     except Exception as e:
