@@ -3,6 +3,8 @@ from InquirerPy import inquirer
 from InquirerPy.validator import EmptyInputValidator
 from sim_hangar_manager.database.enums import (
     AircraftCategory, 
+    EngineType,
+    AircraftSubCategory,
     AircraftType, 
     ModuleType, 
     Store, 
@@ -31,12 +33,16 @@ def prompt_add_aircraft_model() -> getattr:
 
         module_name = inquirer.text(
             message="Folder/Package Name (e.g., a2a-aircraft-pa24):",
-            validate=EmptyInputValidator("Module name is required for folder scanning.")
+            validate=EmptyInputValidator("Module name is required.")
         ).execute()
 
         icao_code = inquirer.text(
             message="Designator ICAO Code (4 characters, e.g., PA24):",
             default="UNKN"
+        ).execute()
+
+        manufacturer = inquirer.text(
+            message="Aircraft Manufacturer (e.g., Piper, Cessna):",
         ).execute()
 
         developer = inquirer.text(
@@ -49,9 +55,19 @@ def prompt_add_aircraft_model() -> getattr:
             choices=[enum.value for enum in AircraftType]
         ).execute()
 
-        category = inquirer.select(
-            message="Engine Plant Category:",
+        engine_type = inquirer.select(
+            message="Engine Type Category:",
+            choices=[enum.value for enum in EngineType]
+        ).execute()
+
+        aircraft_category = inquirer.select(
+            message="Aircraft Category (e.g., AIRLINER, GENERAL_AVIATION)",
             choices=[enum.value for enum in AircraftCategory]
+        ).execute()
+
+        aircraft_subcategory = inquirer.select(
+            message="Aircraft Sub-Category (e.g., HEAVY, VINTAGE)",
+            choices=[enum.value for enum in AircraftSubCategory]
         ).execute()
 
         simulator = inquirer.select(
@@ -86,7 +102,10 @@ def prompt_add_aircraft_model() -> getattr:
             "icao_code": icao_code,
             "developer": developer,
             "type": ac_type,
-            "category": category,
+            "manufacturer": manufacturer,
+            "engine_type": engine_type,
+            "aircraft_category": aircraft_category,
+            "aircraft_subcategory": aircraft_subcategory,
             "simulator": simulator,
             "simulator_compatibility": simulator_compatibility,
             "module_type": module_type,

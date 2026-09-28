@@ -73,6 +73,9 @@ poetry run sim_hangar_manager
 
 # Option 2: as a standalone python script
 poetry run python -m sim_hangar_manager
+
+# Option 3: Run without Poetry
+python src/sim_hangar_manager
 ```
 
 ### Execute Tests

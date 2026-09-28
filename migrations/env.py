@@ -1,9 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+
+from sim_hangar_manager.database.connection import DATABASE_URL
 from sim_hangar_manager.database.models import Base
 
 # this is the Alembic Config object, which provides
@@ -25,7 +25,7 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -45,6 +45,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        render_as_batch=True, # Important, this is because SQLite does not work the same as MySQL
     )
 
     with context.begin_transaction():
@@ -66,8 +67,9 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata, 
-            render_as_batch=True
+            connection=connection, 
+            target_metadata=target_metadata, 
+            render_as_batch=True # Important, this is because SQLite does not work the same as MySQL
         )
 
         with context.begin_transaction():

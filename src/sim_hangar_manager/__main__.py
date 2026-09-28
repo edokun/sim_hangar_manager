@@ -3,7 +3,7 @@ from sqlalchemy import text
 from sim_hangar_manager.database.connection import SessionLocal
 from sim_hangar_manager.cli.menu import main_menu
 
-console = Console()
+#console = Console()
 
 
 def init_app():
@@ -19,9 +19,9 @@ def init_app():
 
 
 def main():
-    with console.status("[bold cyan]Loading Sim Hangar Manager...[/bold cyan]",
-                        spinner="dots"):
-        init_app()
+    #with console.status("[bold cyan]Loading Sim Hangar Manager...[/bold cyan]",
+    #                    spinner="dots"):
+    #    init_app()
 
     main_menu()
 

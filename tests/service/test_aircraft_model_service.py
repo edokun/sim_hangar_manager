@@ -12,7 +12,7 @@ def test_register_aircraft_module_success(aircraft_service):
         "simulator": "DCS",
         "notes": "Carrier capable multirole fighter",
         "type": "AIRCRAFT",
-        "category": "MULTI_JET"
+        "engine_type": "MULTI_JET"
     }
 
     created = aircraft_service.register_aircraft_model(payload)
@@ -31,7 +31,7 @@ def test_list_active_hangar_modules_returns_all(aircraft_service):
         "module_name": "bksq-b58",
         "simulator": "MSFS",
         "type": "AIRCRAFT",
-        "category": "MULTI_PISTON_ENGINE"
+        "engine_type": "MULTI_PISTON_ENGINE"
     }
     payload2 = {
         "name": "Bonanza A36 Professional",
@@ -40,7 +40,7 @@ def test_list_active_hangar_modules_returns_all(aircraft_service):
         "module_name": "bksq-a36",
         "simulator": "MSFS",
         "type": "AIRCRAFT",
-        "category": "SINGLE_PISTON_ENGINE"
+        "engine_type": "SINGLE_PISTON_ENGINE"
     }
 
     aircraft_service.register_aircraft_model(payload1)
@@ -59,7 +59,8 @@ def test_register_duplicate_aircraft_module_raises_exception(aircraft_service):
         "icao_code": "B737",
         "developer": "PMDG",
         "type": "AIRCRAFT",
-        "category": "MULTI_JET"
+        "engine_type": "MULTI_JET",
+        "aircraft_category": "AIRLINER"
     }
 
     # First Save successful

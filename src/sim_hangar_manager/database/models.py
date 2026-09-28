@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from typing import List, Optional
-from sqlalchemy import String, Float, DateTime, ForeignKey, Integer, UniqueConstraint
+
+from sqlalchemy import (DateTime, Float, ForeignKey, Integer, String,
+                        UniqueConstraint)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -14,21 +16,27 @@ class Base(DeclarativeBase):
 class AircraftModel(Base):
     __tablename__ = "aircraft_models"
 
-    # Basic required fields for the aircraft model
+    # Basic fields for the aircraft model
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     # Name of the module like folder name or package name
     module_name: Mapped[str] = mapped_column(String(100))
-    # Name of the aircraft model like "Cessna 172 SkyHawk" or "Boeing 747-8"
+    # Name of the aircraft model like "bksq_aircraft_baronpro, usually this is taken as aircraft sub folder name"
     name: Mapped[str] = mapped_column(String(100))
+    # Aircraft name (Correct name like Baron 58, or C172 Skyhawk II)
+    aircraft_name: Mapped[Optional[str]] = mapped_column(String(50))
     # ICAO code for the aircraft model
     icao_code: Mapped[str] = mapped_column(String(4), default="UNKN")
-    # Name of the developer or company that created the aircraft model
-    developer: Mapped[str] = mapped_column(String(100))
+    # Aircraft Manufacturer (Piper, Cessna, Beech, Boeing, etc.)
+    manufacturer: Mapped[Optional[str]] = mapped_column(String(50)) 
     # ENUM (Aircraft, Helicopter, Glider, etc.)
     type: Mapped[str] = mapped_column(String(20))
-    # ENUM Category of the aircraft model (Single Engine, Multi Engine, etc.)
-    category: Mapped[str] = mapped_column(String(20))
-    # simulator name like "MSFS", "X-Plane", "P3D", etc.
+    # ENUM Engine Type of the aircraft model (Single Engine, Multi Engine, etc.)
+    engine_type: Mapped[str] = mapped_column(String(30))
+    # ENUM Aircraft Category, (GENERAL AVIATION, AIRLINER, etc.)
+    aircraft_category: Mapped[Optional[str]] = mapped_column(String(50))
+    # ENUM Aircraft Sub-Category, (WARBIRD, VINTAGE, CLASSIC, etc.)
+    aircraft_subcategory: Mapped[Optional[str]] = mapped_column(String(50))
+    # ENUM simulator, simulator name like "MSFS", "X-Plane", "P3D", etc.
     simulator: Mapped[str] = mapped_column(String(20))
 
     # -- Module specific optional fields --
@@ -37,7 +45,9 @@ class AircraftModel(Base):
     # SIM Version compatibility
     simulator_compatibility: Mapped[Optional[str]] = mapped_column(String(50))
 
-    # -- Developer specific optional fields --
+    # -- Developer specific fields --
+    # Name of the developer or company that created the aircraft model
+    developer: Mapped[str] = mapped_column(String(100))
     # ENUM ModuleType
     module_type: Mapped[Optional[str]] = mapped_column(String(100))
     # ENUM Store
@@ -45,7 +55,7 @@ class AircraftModel(Base):
     # URL of the developer's website
     developer_url: Mapped[Optional[str]] = mapped_column(String(100))
 
-    # -- User specific optional fields --
+    # -- User specific fields --
     # additional notes the user can add about the aircraft model
     notes: Mapped[Optional[str]] = mapped_column(String(500))
     # rating of the aircraft model (1-5 stars)
@@ -61,8 +71,11 @@ class AircraftModel(Base):
     module_file_location_2: Mapped[Optional[str]] = mapped_column(String(1000))
     # additional information of the module/addon
     model_metadata: Mapped[Optional[str]] = mapped_column(String(1000))
-    # Flag to indicate if the aircraft model/module is active
+    # Flag to indicate if the aircraft model/module is active (soft delete)
     is_active: Mapped[bool] = mapped_column(default=True)
+    # Flag to indicate if the aircraft model/module is installed
+    is_installed: Mapped[bool] = mapped_column(default=False)
+
 
     # Timestamps passed as callables (lambda) 
     # to evaluate the actual time on row insertion/update

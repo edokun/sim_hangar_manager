@@ -1,7 +1,9 @@
 import json
 import logging
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+from sim_hangar_manager.database import enums
 from sim_hangar_manager.scanners.base_scanner import BaseSimulatorScanner
 
 logger = logging.getLogger(__name__)
@@ -149,9 +151,11 @@ class MSFSScanner(BaseSimulatorScanner):
                 "simulator": self.simulator_name,
                 "module_file_location_1": str(aircraft_variant_folder.absolute()),
                 "icao_code": "UNKN",
-                "type": "UNKNOWN",
-                "category": "UNKNOWN",
-                "notes": f"Scanned from bundle {package_folder.name} (Variant: {variant_folder_name})",
+                "type": enums.AircraftType.UNKNOWN ,
+                "engine_type": enums.EngineType.UNKNOWN,
+                "aircraft_category": enums.AircraftCategory.UNKNOWN,
+                "notes": f"Scanned from {package_folder.name} (Variant: {variant_folder_name})",
+                "is_installed": True
             }
 
         except (json.JSONDecodeError, OSError) as e:

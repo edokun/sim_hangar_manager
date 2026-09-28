@@ -14,6 +14,7 @@ def display_aircraft_models_table(models: List[AircraftModel]) -> None:
 
     if not models:
         console.print("\n[bold yellow]No aircraft modules registered in your hangar yet.[/bold yellow]\n")
+        inquirer.text(message="Press Enter to Return to main menu...").execute()
         return
 
     table = Table(
