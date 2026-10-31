@@ -1,11 +1,13 @@
-from sqlalchemy.orm import Session
 from typing import List, Optional
+
+from sqlalchemy.orm import Session
+
 from sim_hangar_manager.database.models import AircraftModel
 
 
 class AircraftModelRepository:
-    def __init__(self, db: Session):
-        self.db = db
+    def __init__(self, session: Session):
+        self.db = session
 
     def create(self, aircraft_model: AircraftModel) -> AircraftModel:
         """

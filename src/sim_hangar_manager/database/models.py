@@ -22,6 +22,8 @@ class AircraftModel(Base):
     module_name: Mapped[str] = mapped_column(String(100))
     # Name of the aircraft model like "bksq_aircraft_baronpro, usually this is taken as aircraft sub folder name"
     name: Mapped[str] = mapped_column(String(100))
+    # Variant Name for cases where an aircraft module contains multiple variants
+    variant: Mapped[Optional[str]] = mapped_column(String(100))
     # Aircraft name (Correct name like Baron 58, or C172 Skyhawk II)
     aircraft_name: Mapped[Optional[str]] = mapped_column(String(50))
     # ICAO code for the aircraft model
@@ -32,12 +34,16 @@ class AircraftModel(Base):
     type: Mapped[str] = mapped_column(String(20))
     # ENUM Engine Type of the aircraft model (Single Engine, Multi Engine, etc.)
     engine_type: Mapped[str] = mapped_column(String(30))
+    # Number of Engines
+    engine_count: Mapped[Optional [int]] = mapped_column(Integer, default=0)
     # ENUM Aircraft Category, (GENERAL AVIATION, AIRLINER, etc.)
     aircraft_category: Mapped[Optional[str]] = mapped_column(String(50))
     # ENUM Aircraft Sub-Category, (WARBIRD, VINTAGE, CLASSIC, etc.)
     aircraft_subcategory: Mapped[Optional[str]] = mapped_column(String(50))
     # ENUM simulator, simulator name like "MSFS", "X-Plane", "P3D", etc.
     simulator: Mapped[str] = mapped_column(String(20))
+    # Optional field to group modules into a user made group
+    group: Mapped[Optional[str]] = mapped_column(String(50))
 
     # -- Module specific optional fields --
     # additional information like aircraft performance, limitations, etc.
@@ -52,7 +58,7 @@ class AircraftModel(Base):
     module_type: Mapped[Optional[str]] = mapped_column(String(100))
     # ENUM Store
     store: Mapped[Optional[str]] = mapped_column(String(100))
-    # URL of the developer's website
+    # URL of the developer's website (Maybe not needed, delete if not needed)
     developer_url: Mapped[Optional[str]] = mapped_column(String(100))
 
     # -- User specific fields --
@@ -67,9 +73,9 @@ class AircraftModel(Base):
     # Path to the module's folder or package file
     module_file_location_1: Mapped[Optional[str]] = mapped_column(String(1000)) 
     # Path to the module's folder or package file
-    # (For cases where addon has 2 different packages for MSFS 2020 and MSFS 2024, for example)
+    # (For cases where addon has 2 different packages for MSFS 2020 and MSFS 2024, for example) (Maybe not needed, delete if not needed)
     module_file_location_2: Mapped[Optional[str]] = mapped_column(String(1000))
-    # additional information of the module/addon
+    # additional information of the module/addon (Maybe not needed, delete if not needed)
     model_metadata: Mapped[Optional[str]] = mapped_column(String(1000))
     # Flag to indicate if the aircraft model/module is active (soft delete)
     is_active: Mapped[bool] = mapped_column(default=True)

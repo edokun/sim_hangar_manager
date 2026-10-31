@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
 from pathlib import Path
+from typing import Any, Dict, List
+
 
 class BaseSimulatorScanner(ABC):
     """
@@ -10,7 +11,7 @@ class BaseSimulatorScanner(ABC):
     @property
     @abstractmethod
     def simulator_name(self) -> str:
-        """Returns the identifier string of the simulator (e.g., 'MSFS2020', 'X-Plane')."""
+        """Returns the identifier string of the simulator (e.g., 'MSFS', 'X-Plane')."""
         pass
 
     @abstractmethod
@@ -22,9 +23,10 @@ class BaseSimulatorScanner(ABC):
         pass
 
     @abstractmethod
-    def scan_directory(self, directory_path: Path) -> List[Dict[str, Any]]:
+    def scan_directory(self, directory_path: Path, skip_validations: bool = False) -> List[Dict[str, Any]]:
         """
         Scans the directory and returns a normalized list of raw dictionaries 
-        containing the detected aircraft module metadata.
+        containing the detected aircraft module data.
+        The flag skip_validations is used to force detection if the module structure is not standard, disabled by default.
         """
         pass

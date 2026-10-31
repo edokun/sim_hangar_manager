@@ -46,5 +46,10 @@ class ObjectMapper:
         aircraftModel.model_metadata = aircraft_model_data.get("model_metadata")
         aircraftModel.is_active = aircraft_model_data.get("is_active", True)
         aircraftModel.is_installed = aircraft_model_data.get("is_installed", False)
+        aircraftModel.version = aircraft_model_data.get("version")
+        aircraftModel.manufacturer = aircraft_model_data.get("manufacturer")
+        aircraftModel.engine_count = aircraft_model_data.get("engine_count")
+        aircraftModel.variant = aircraft_model_data.get("variant")
+        aircraftModel.group = aircraft_model_data.get("group")
         
         return aircraftModel

@@ -1,7 +1,7 @@
 [project]
 name = "sim-hangar-manager"
 version = "0.1.0"
-description = "Manage Aircraft used in flight simulators."
+description = "Simple tool to manage a personal hangar for flight simulators."
 authors = [
     {name = "Eduardo Vidal",email = "gamucckib@mozmail.com"}
 ]
@@ -12,7 +12,8 @@ dependencies = [
     "alembic (>=1.18.5,<2.0.0)",
     "sqlalchemy (>=2.0.51,<3.0.0)",
     "inquirerpy (>=0.3.4,<0.4.0)",
-    "rich (>=15.0.0,<16.0.0)"
+    "rich (>=15.0.0,<16.0.0)",
+    "typer (>=0.27.2,<0.28.0)"
 ]
 
 [tool.poetry]
@@ -20,6 +21,7 @@ packages = [{include = "sim_hangar_manager", from = "src"}]
 
 [tool.poetry.scripts]
 sim_hangar_manager = "sim_hangar_manager.__main__:main"
+simhm = "sim_hangar_manager.cli.cli_app:app"
 
 
 [build-system]
@@ -28,5 +30,6 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "pytest (>=9.1.1,<10.0.0)"
+    "pytest (>=9.1.1,<10.0.0)",
+    "coverage (>=7.17.0,<8.0.0)"
 ]
