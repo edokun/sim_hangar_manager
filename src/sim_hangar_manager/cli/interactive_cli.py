@@ -13,7 +13,6 @@ from sim_hangar_manager.cli.views.add_aircraft_model_view import \
     AddAircraftModelView
 from sim_hangar_manager.cli.views.list_aircraft_model_view import \
     ListAircraftModelView
-from sim_hangar_manager.cli.views.scan_view import ScanView
 from sim_hangar_manager.cli.views.search_view import SearchAircraftView
 from sim_hangar_manager.cli.views.show_aircraft_model_view import \
     AircraftModelDetailView
@@ -26,14 +25,12 @@ class InteractiveCLI():
 
     def __init__(self, 
                  aircraft_model_service: AircraftModelService,
-                 scan_view: ScanView,
                  search_aircraft_view: SearchAircraftView,
                  aircraft_model_detail_view: AircraftModelDetailView,
                  add_aircraft_model_view: AddAircraftModelView,
                  list_aircraft_model_view: ListAircraftModelView,
                  stdout_console: Console):
         self.aircraft_model_service=aircraft_model_service
-        self.scan_view=scan_view
         self.search_aircraft_view=search_aircraft_view
         self.aircraft_model_detail_view=aircraft_model_detail_view
         self.add_aircraft_model_view=add_aircraft_model_view
@@ -72,13 +69,6 @@ class InteractiveCLI():
             self.list_aircraft_model_view.list_aircraft_models_interactive()
         except Exception as e:
             self.console.print(f"\n[bold red]✖ Error reading Aircraft modules: {e}[/bold red]\n")
-
-
-    def _handle_module_scan_option(self):
-        try:
-            self.scan_view.scan_modules()
-        except Exception as e:
-                print(f"\n[ERROR] Failed to scan modules: {e}\n")
 
 
     def _handle_module_search_option(self):
@@ -128,34 +118,29 @@ class InteractiveCLI():
                 }, style_override=True)
 
                 choice = inquirer.select(
-                    message="",
+                    message="Select an option:",
                     qmark="",
                     amark="",
                     choices=[
                         Choice(value="1", name="1. Add New Aircraft Module"),
-                        Choice(value="2", name="2. Scan for Aircraft Modules"),
-                        Choice(value="3", name="3. List All Aircraft Modules"),
-                        Choice(value="4", name="4. Search for Aircraft Modules"),
-                        Choice(value=None, name="5. Exit"),
+                        Choice(value="2", name="2. List All Aircraft Modules"),
+                        Choice(value="3", name="3. Search for Aircraft Modules"),
                     ],
-                    pointer="❯ ",
+                    pointer=" ❯",
+                    border=True,
+                    long_instruction="Press CTRL + C to exit.",
+                    show_cursor=False,
                     style=custom_style,
                 ).execute()
-
-                if not choice:
-                    self.console.clear()
-                    self.console.print("\n[bold blue]Closing SIM HANGAR MANAGER... Bye![/bold blue]\n")
-                    sys.exit(0)
 
                 if choice.startswith("1"):
                     self._handle_create_model()
                 elif choice.startswith("2"):
-                    self._handle_module_scan_option()
-                elif choice.startswith("3"):
                     self._handle_list_models()
-                elif choice.startswith("4"):
+                elif choice.startswith("3"):
                     self._handle_module_search_option()
 
             except KeyboardInterrupt:
-                self.console.print("\n[bold blue]Closing SIM HANGAR MANAGER... Bye![/bold blue]\n")
+                self.console.clear()
+                self.console.print("\n[bold blue]Closed SIM HANGAR MANAGER.[/bold blue]\n")
                 sys.exit(0)

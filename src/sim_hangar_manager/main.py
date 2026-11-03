@@ -41,11 +41,6 @@ def bootstrap_application() -> InteractiveCLI:
     scanner_service = ScannerService()
     
     # 6. Views
-    scan_view = ScanView(
-        scanner_service=scanner_service,
-        aircraft_model_service=aircraft_model_service,
-        stdout_console=stdout_console)
-
     search_aircraft_view = SearchAircraftView(
         aircraft_model_service=aircraft_model_service,
         stdout_console=stdout_console)
@@ -65,7 +60,6 @@ def bootstrap_application() -> InteractiveCLI:
     # 7. Menú Principal / REPL CLI (Inyectando las vistas armadas)
     interactive_cli = InteractiveCLI(
         aircraft_model_service=aircraft_model_service,
-        scan_view=scan_view,
         search_aircraft_view=search_aircraft_view,
         aircraft_model_detail_view=aircraft_model_detail_view,
         add_aircraft_model_view=add_aircraft_model_view,

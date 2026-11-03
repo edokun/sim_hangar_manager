@@ -68,6 +68,7 @@ aircraft_manufacturers = {
     "PILATUS": None,
     "PIPER": None,
     "ROCKWELL": None,
+    "ROBINSON": None,
     "REIMS": None,
     "RYAN": None,
     "SAAB": None,

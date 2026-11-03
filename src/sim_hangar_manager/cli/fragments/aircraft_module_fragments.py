@@ -69,7 +69,7 @@ class AircraftModelFragments:
         developer_info_table.add_column("Field", style="bold yellow", width=15)
         developer_info_table.add_column("Value", style="white", width=30, overflow="fold")
 
-        developer_info_table.add_row("Mod Version:", aircraft.version or "1.0.0")
+        developer_info_table.add_row("Mod Version:", aircraft.version or f"[dim]N/A[/dim]")
         developer_info_table.add_row("Developer:", aircraft.developer)
         developer_info_table.add_row("Module Type:", aircraft.module_type or f"[dim]N/A[/dim]")
         developer_info_table.add_row("Store:", aircraft.store or f"[dim]N/A[/dim]")

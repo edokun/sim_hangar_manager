@@ -31,7 +31,7 @@ class SearchAircraftView:
             choices = [
                 Choice(
                     value=ac,
-                    name=f"{ac.name} | ICAO: {ac.icao_code or 'N/A'} | Dev: {ac.developer} | Sim: {ac.simulator}",
+                    name=f"{ac.name} {"- " + ac.variant if ac.variant else ""} | ICAO: {ac.icao_code or 'N/A'} | Dev: {ac.developer} | {ac.simulator}",
                 )
                 for ac in aircraft_modules
             ]
@@ -41,6 +41,11 @@ class SearchAircraftView:
                 message="Type to filter (Name, ICAO, Developer, Simulator):",
                 choices=choices,
                 match_exact=False,
+                qmark="",
+                amark="",
+                max_height=20,
+                long_instruction="Press CTRL + C to cancel.",
+                border=True,
                 transformer=lambda result: f"Selected: {result}" if result else "",
             ).execute()
 

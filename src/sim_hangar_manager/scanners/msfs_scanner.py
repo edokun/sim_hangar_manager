@@ -184,7 +184,7 @@ class MSFSScanner(BaseSimulatorScanner):
             "name": f"{manifest_data.get('title', package_folder.name)}",
             "developer": manifest_data.get("creator", "Unknown Developer"),
             "manufacturer": manufacturer.upper() if manufacturer else None,
-            "version": manifest_data.get("package_version", "1.0.0"),
+            "version": manifest_data.get("package_version"),
             "simulator": self.simulator_name,
             "module_file_location_1": str(package_folder.absolute()),
             "icao_code": "UNKN",

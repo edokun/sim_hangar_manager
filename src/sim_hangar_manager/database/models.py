@@ -69,7 +69,7 @@ class AircraftModel(Base):
 
     # -- Module/Addon Metadata fields --
     # Module/mod version (Obtained from the aircraft's manifest file)
-    version: Mapped[Optional[str]] = mapped_column(String(20))
+    version: Mapped[Optional[str]] = mapped_column(String(10))
     # Path to the module's folder or package file
     module_file_location_1: Mapped[Optional[str]] = mapped_column(String(1000)) 
     # Path to the module's folder or package file

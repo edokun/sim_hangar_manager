@@ -86,7 +86,7 @@ class AddAircraftModelView():
             amark="🗸",
             style=style,
             choices=[enum.value for enum in AircraftType],
-            long_instruction="Press CTRL + C to cancel..."
+            long_instruction="Press CTRL + C to cancel."
         ).execute()
         
         aircraft_name = inquirer.text(
