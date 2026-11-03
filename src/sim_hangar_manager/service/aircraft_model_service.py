@@ -42,8 +42,7 @@ class AircraftModelService:
                 "version": raw_data["version"],
                 "is_active": raw_data["is_active"],
                 "is_installed": raw_data["is_installed"],
-                "module_file_location_1": raw_data["module_file_location_1"],
-                "module_file_location_2": raw_data["module_file_location_2"]
+                "module_file_location_1": raw_data["module_file_location_1"]
             }
 
             self._debug(f"Updating existing module: {module_name} - {simulator}")

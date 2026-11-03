@@ -111,9 +111,9 @@ class Aircraft(Base):
     # Unique tail number for the aircraft
     tail_number: Mapped[str] = mapped_column(String(10), unique=True)
     aircraft_model_id: Mapped[int] = mapped_column(ForeignKey("aircraft_models.id"))
-    # Some airplanes have different variants like "Classic", "NG", "X", etc.
+    # Some airplanes have different variants like "Classic", "NG", "X", etc. (Maybe not needed, delete if not needed)
     variant: Mapped[Optional[str]] = mapped_column(String(50))
-    # Some airplanes have different engine options
+    # Some airplanes have different engine options (Maybe not needed, delete if not needed)
     engine_variant: Mapped[Optional[str]] = mapped_column(String(50))
     # ICAO code of the home airport for the aircraft
     home_airport: Mapped[Optional[str]] = mapped_column(String(4))

@@ -43,12 +43,16 @@ def test_valid_aircraft_package_detection(tmp_path: Path):
     # Test
     results = scanner.scan_directory(tmp_path)
     assert len(results) == 1
-    assert results[0]["name"] == "Piper PA-24 Comanche 250 - A2A Pa24"
+    assert results[0]["name"] == "Piper PA-24 Comanche 250"
     assert results[0]["developer"] == "A2A Simulations"
     assert results[0]["simulator"] == "MSFS"
 
 
 def test_livery_is_ignored_by_scanner(tmp_path: Path):
+    '''
+    The method can_scan will return true, but when scanning by default
+    will not pick the module as it is not fully valid
+    '''
 
     scanner = MSFSScanner()
 
@@ -69,9 +73,41 @@ def test_livery_is_ignored_by_scanner(tmp_path: Path):
     )
 
     # Should not be scanned
-    assert scanner.can_scan(tmp_path) is False
+    assert scanner.can_scan(tmp_path) is True
     results = scanner.scan_directory(tmp_path)
     assert len(results) == 0
+
+
+def test_not_convenitonal_pacakge_is_detected_by_scanner(tmp_path: Path):
+    '''
+    The method can_scan will return true, when calling method scan_directory with the skip_validation flag = True
+    will relax validation and should detect this module as valid, this is for packages that are not conventional
+    or the aircraft contains multiple variants and folders are reused.
+    '''
+
+    scanner = MSFSScanner()
+
+    # Create a livery path without model folder
+    livery_dir = tmp_path / "737-700"
+    texture_dir = (
+        livery_dir / "SimObjects" / "Airplanes" / "pmdg737_AM" / "texture"
+    )
+    texture_dir.mkdir(parents=True)
+
+    manifest_data = {
+        "title": "PMDG 737 Passengers",
+        "creator": "Community Painter",
+        "content_type": "AIRCRAFT",
+    }
+    (livery_dir / "manifest.json").write_text(
+        json.dumps(manifest_data), encoding="utf-8"
+    )
+
+    # Should not be scanned
+    assert scanner.can_scan(tmp_path) is True
+    results = scanner.scan_directory(tmp_path, skip_validations=True)
+    assert len(results) == 1
+
 
 def test_valid_aircraft_package_detection_real_dir():
 
