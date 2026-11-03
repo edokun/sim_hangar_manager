@@ -46,7 +46,7 @@ class AircraftModel(Base):
     group: Mapped[Optional[str]] = mapped_column(String(50))
 
     # -- Module specific optional fields --
-    # additional information like aircraft performance, limitations, etc.
+    # additional information like aircraft performance, limitations, etc. (Maybe not needed, delete if not needed)
     model_data: Mapped[Optional[str]] = mapped_column(String(1000))
     # SIM Version compatibility
     simulator_compatibility: Mapped[Optional[str]] = mapped_column(String(50))

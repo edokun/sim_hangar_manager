@@ -208,7 +208,8 @@ class MSFSScanner(BaseSimulatorScanner):
                 variant_data["type"] = config_file_data["category"]
                 variant_data["aircraft_name"] = config_file_data["model"]
                 variant_data["engine_count"] = config_file_data["engine_count"]
-                variant_data["engine_type"] = config_file_data["engine_type"]
+                engine_type = config_file_data["engine_type"]
+                variant_data["engine_type"] = engine_type if engine_type else enums.EngineType.UNKNOWN
                 variant_data["variant"] = config_file_data["model"]
 
         return variant_data

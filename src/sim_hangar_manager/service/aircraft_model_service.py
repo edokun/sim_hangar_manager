@@ -115,6 +115,13 @@ class AircraftModelService:
         return self.repository.update_rating(model_id, new_rating)
 
 
+    def delete(self, model_id: int) -> None:
+        """
+        Deletes an aircraft model by its ID. This will do Delete Cascade
+        """
+        self.repository.delete(model_id)
+
+
     def _debug(self, message: str):
         if self.log_console:
             self.log_console.print(f"[AircraftModuleService] {message}")

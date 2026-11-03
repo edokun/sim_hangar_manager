@@ -116,3 +116,15 @@ class AircraftModelRepository:
             self.db.commit()
             return True
         return False
+
+
+    def delete(self, model_id: int) -> bool:
+        """
+        Deletes an aircraft model, this will trigger a Delete cascade.
+        """
+        db_model = self.get_by_id(model_id)
+        if db_model:
+            self.db.delete(db_model)
+            self.db.commit()
+            return True
+        return False

@@ -52,7 +52,7 @@ def list_models():
     """List Aircraft Models in the database"""
     from sim_hangar_manager.main import bootstrap_list_aircraft_model_view
     list_aircraft_model_view = bootstrap_list_aircraft_model_view()
-    list_aircraft_model_view.show_aircraft_models()
+    list_aircraft_model_view.list_aircraft_models()
 
 
 @add_app.command("aircraft")

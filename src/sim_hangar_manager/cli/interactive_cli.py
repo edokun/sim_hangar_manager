@@ -9,8 +9,6 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
-from sim_hangar_manager.cli.forms.create_aircraft_model_form import \
-    prompt_add_aircraft_model
 from sim_hangar_manager.cli.views.add_aircraft_model_view import \
     AddAircraftModelView
 from sim_hangar_manager.cli.views.list_aircraft_model_view import \
@@ -47,6 +45,10 @@ class InteractiveCLI():
         """
         Flow for collecting raw data and inserting a new aircraft module.
         """
+
+        self.add_aircraft_model_view.run(True)
+
+        '''
         raw_data = prompt_add_aircraft_model()
         if not raw_data:
             return
@@ -58,6 +60,7 @@ class InteractiveCLI():
             )
         except Exception as e:
             self.console.print(f"\n[bold red]✖ Failed to save record: {e}[/bold red]\n")
+        '''
 
 
     def _handle_list_models(self):
@@ -65,8 +68,8 @@ class InteractiveCLI():
         Flow for fetching and displaying registered aircraft modules.
         """
         try:
-            models = self.aircraft_model_service.get_all_aircraft_models()
-            self.list_aircraft_model_view.display_aircraft_models_table(models)
+            #models = self.aircraft_model_service.get_all_aircraft_models()
+            self.list_aircraft_model_view.list_aircraft_models_interactive()
         except Exception as e:
             self.console.print(f"\n[bold red]✖ Error reading Aircraft modules: {e}[/bold red]\n")
 
@@ -76,6 +79,7 @@ class InteractiveCLI():
             self.scan_view.scan_modules()
         except Exception as e:
                 print(f"\n[ERROR] Failed to scan modules: {e}\n")
+
 
     def _handle_module_search_option(self):
         try:
@@ -129,9 +133,9 @@ class InteractiveCLI():
                     amark="",
                     choices=[
                         Choice(value="1", name="1. Add New Aircraft Module"),
-                        Choice(value="2", name="2. Scan folder for Aircraft Modules"),
+                        Choice(value="2", name="2. Scan for Aircraft Modules"),
                         Choice(value="3", name="3. List All Aircraft Modules"),
-                        Choice(value="4", name="4. Search/Filter Aircraft Modules"),
+                        Choice(value="4", name="4. Search for Aircraft Modules"),
                         Choice(value=None, name="5. Exit"),
                     ],
                     pointer="❯ ",

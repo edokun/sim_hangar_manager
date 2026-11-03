@@ -3,6 +3,7 @@ from InquirerPy.validator import EmptyInputValidator
 from rich.box import DOUBLE
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text
 
 from sim_hangar_manager.cli.fragments.aircraft_module_fragments import \
     AircraftModelFragments
@@ -28,20 +29,28 @@ class AddAircraftModelView():
         self.aircraft_model_service = aircraft_model_service
         self.console = stdout_console
 
-    def run(self):
+    def run(self, confirm_data_saved: bool = False):
         '''
-        Launches an interactive form to create an Aircraft Model
+        Launches an interactive form to register an Aircraft Model
         '''
         try:
             self.console.clear()
             self._show_header()
-            captured_data = self._launch_capture_form()
+            captured_data = self._capture_form()
             saved_aircraft_model = self.aircraft_model_service.register_aircraft_model(captured_data)
             self.console.print(f"[green]Aircraft module saved successfully.[/green]")
             aircraft_model_detail_view = AircraftModelFragments(self.console)
             aircraft_model_detail_view.show_detailed_fragment(saved_aircraft_model)
+
+            if confirm_data_saved:
+                inquirer.text(
+                    message="Press any key to go back to menu...",
+                    qmark="",
+                    amark=""
+                ).execute()
+                
         except(AircraftModuleAlreadyExistsError):
-            self.console.print(f"Model Already Exists")
+            self.console.print(f"A model/module with provided data already exists, make sure to specify variant.")
         except(KeyboardInterrupt):
             self.console.clear()
             self.console.print(f"[red]Process cancelled by the user.[/red]")
@@ -49,7 +58,7 @@ class AddAircraftModelView():
 
     def _show_header(self):
         panel = Panel(
-            f"If the Aircraft Module is already installed, it is recommended to use the scan option.",
+            Text("If the Aircraft Module is already installed, it is recommended to use the scan option.", justify="center"),
             title="[bold white on blue] ADD Aircraft Module [/bold white on blue]",
             box=DOUBLE,
             border_style="blue",
@@ -59,7 +68,7 @@ class AddAircraftModelView():
         self.console.print(panel)
 
 
-    def _launch_capture_form(self) -> Dict[Any,Any]:
+    def _capture_form(self) -> Dict[Any,Any]:
         style = get_style(
             {
                 "questionmark": "#ff9d00 bold",
@@ -69,14 +78,15 @@ class AddAircraftModelView():
         )
 
         # --- General Aircraft Data
-        self.console.rule("General Aircraft Data")
+        self.console.rule("[bold cyan]General Aircraft Data[/bold cyan]")
 
         aircraft_type = inquirer.select(
             message="Aircraft Type Class:",
             qmark="*",
             amark="🗸",
             style=style,
-            choices=[enum.value for enum in AircraftType]
+            choices=[enum.value for enum in AircraftType],
+            long_instruction="Press CTRL + C to cancel..."
         ).execute()
         
         aircraft_name = inquirer.text(
@@ -111,7 +121,7 @@ class AddAircraftModelView():
         ).execute()
 
         variant = inquirer.text(
-            message="Variant (e.g., Bush wheels, Wheel Pants, Cargo cabin, etc.):",
+            message="Variant (e.g., Bush wheels, Wheel Pants, Cargo cabin):",
             qmark="*",
             amark="🗸",
             style=style,
@@ -160,7 +170,7 @@ class AddAircraftModelView():
         ).execute()
 
         # --- Aircraft Model Data
-        self.console.rule("Aircraft Model Data")
+        self.console.rule("[bold cyan]Aircraft Model Data[/bold cyan]")
 
         simulator = inquirer.select(
             message="Target Simulator:",
@@ -193,7 +203,7 @@ class AddAircraftModelView():
 
         name = manufacturer + "_" + aircraft_name
         name = name.replace(" ","_").lower()
-        module_name = name
+        module_name = name + "::" + variant
         version = "1.0.0"
         folder_location = None
 
@@ -246,7 +256,7 @@ class AddAircraftModelView():
         ).execute()
 
         # --- Developer Data
-        self.console.rule("Developer Data")
+        self.console.rule("[bold cyan]Developer Data[/bold cyan]")
 
         developer = inquirer.text(
             message="Developer (e.g., A2A Simulations):",
@@ -277,7 +287,7 @@ class AddAircraftModelView():
             ).execute()
 
         # --- Additional Data
-        self.console.rule("Additional Data")
+        self.console.rule("[bold cyan]Additional Data[/bold cyan]")
 
         rating = inquirer.number(
             message="Your personal evaluation rating scale (0 to 5 stars):",

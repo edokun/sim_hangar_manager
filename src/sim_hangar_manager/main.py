@@ -51,7 +51,8 @@ def bootstrap_application() -> InteractiveCLI:
         stdout_console=stdout_console)
     
     aircraft_model_detail_view = AircraftModelDetailView(
-        aircraft_model_service=aircraft_model_service)
+        aircraft_model_service=aircraft_model_service,
+        stdout_console=stdout_console)
 
     add_aircraft_model_view = AddAircraftModelView(
         aircraft_model_service=aircraft_model_service,

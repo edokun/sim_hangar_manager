@@ -14,47 +14,58 @@ class AircraftModelFragments:
         self.console = stdout_console
 
     def show_detailed_fragment(self, aircraft: AircraftModel):
+
+        # Padding 4 values tuple means:
+        # top, right, bottom, and left
+
         # 1. Header Table
         id_table = Table(
             show_header=False,
             box=None,
-            padding=(0,0,1,0),
-            expand=True,
+            padding=(0,2,1,0),
+            expand=False,
         )
 
-        id_table.add_column("Value1", style="bold yellow", justify="left")
-        id_table.add_column("Value2", style="white", justify="left")
+        id_table.add_column("module_id", style="bold yellow", justify="left", width=6)
+        id_table.add_column("module_name", style="white", justify="left", width=43)
+        id_table.add_column("module_status", style="white", justify="right")
 
-        column_text = f"[bold cyan] {aircraft.name.upper()} [/bold cyan]"
-        id_table.add_row(f"[bold yellow] {str(aircraft.id)} [/bold yellow]", column_text)
+        id_column = f"[bold cyan]ID[/bold cyan][bold] {str(aircraft.id)} [/bold]"
+        column_model_name = f"[bold cyan]{aircraft.name.upper()}[/bold cyan]"
+
+        active_text = "Active:✅" if (aircraft.is_active) else "Active:❌"
+        installed_text = "Installed:✅" if (aircraft.is_installed) else "Installed:❌"
+        status_text = f"[bold magenta]{aircraft.simulator}[/bold magenta] - {active_text} {installed_text}"
+
+        id_table.add_row(id_column, column_model_name, status_text)
 
         # 2. Aircraft Data Table
-        aircraft_data_table = Table(show_header=False, box=None, padding=(0, 1))
-        aircraft_data_table.add_column("Field", style="bold yellow", width=20)
-        aircraft_data_table.add_column("Value", style="white", overflow="fold", width=25)
+        aircraft_data_table = Table(show_header=False, box=None)
+        aircraft_data_table.add_column("Field", style="bold yellow", width=18)
+        aircraft_data_table.add_column("Value", style="white", overflow="fold", width=30)
 
         aircraft_data_table.add_row("ICAO Code:", aircraft.icao_code or "[red]UNKN[/red]")
         aircraft_data_table.add_row("Manufacturer:", aircraft.manufacturer or f"[dim]N/A[/dim]")
         aircraft_data_table.add_row("Aircraft name:", aircraft.aircraft_name or f"[dim]N/A[/dim]")
         aircraft_data_table.add_row("Type:", aircraft.type or f"[dim]N/A[/dim]")
         aircraft_data_table.add_row("Engine Type:", aircraft.engine_type or f"[dim]N/A[/dim]")
+        aircraft_data_table.add_row("Engine Count:", str(aircraft.engine_count) or f"[dim]0[/dim]")
         aircraft_data_table.add_row("Aircraft Category:", aircraft.aircraft_category or f"[dim]N/A[/dim]")
         # DO NOT RENDER IF None
         if aircraft.aircraft_subcategory:
-            aircraft_data_table.add_row("Aircraft Sub-Category:", aircraft.aircraft_subcategory)
-        # DO NOT RENDER IF None
-        if aircraft.model_data:
-            aircraft_data_table.add_row("Model Data:", aircraft.model_data)
+            aircraft_data_table.add_row("Sub-Category:", aircraft.aircraft_subcategory)
 
+        aircraft_data_table.add_row("Variant:", aircraft.variant or f"[dim]N/A[/dim]")
+            
         left_column = Group(
-            Text.from_markup("[bold cyan]✈️ Aircraft Information[/bold cyan]"),
+            Text.from_markup("[bold cyan]AIRCRAFT INFORMATION[/bold cyan]"),
             aircraft_data_table,
         )
 
         # 3. Module Version, Rating and Developer Information
         rating_stars = "⭐" * (aircraft.rating or 0) if aircraft.rating else "[dim]-[/dim]"
 
-        developer_info_table = Table(show_header=False, box=None, padding=(0, 1))
+        developer_info_table = Table(show_header=False, box=None)
         developer_info_table.add_column("Field", style="bold yellow", width=15)
         developer_info_table.add_column("Value", style="white", width=30, overflow="fold")
 
@@ -75,14 +86,14 @@ class AircraftModelFragments:
             developer_info_table.add_row("Notes:", aircraft.notes or f"[dim]N/A[/dim]")
 
         right_column = Group(
-            Text.from_markup("[bold cyan]⚙️ Developer and Module Data[/bold cyan]"),
+            Text.from_markup("[bold cyan]DEVELOPER & MODEL DATA[/bold cyan]"),
             developer_info_table,
         )
 
         two_column_section = Columns([left_column, right_column], expand=False)
 
         # 4. Module Metadata
-        module_metadata_table = Table(show_header=False, box=None, padding=(0, 2))
+        module_metadata_table = Table(show_header=False, box=None)
         module_metadata_table.add_column("Field", style="bold yellow")
         module_metadata_table.add_column("Value", style="white")
 
@@ -101,39 +112,22 @@ class AircraftModelFragments:
             long_metadata = aircraft.model_metadata or f"[dim]N/A[/dim]"
             module_metadata_table.add_row("Module Metadata:", Text(long_metadata, style="white", overflow="fold"))
 
-        bottom_table = Table(
-            show_header=False,
-            box=None,
-            padding=(1,1,0,0),
-            expand=True,
-        )
-
-        #bottom_table.add_column("Value1", style="bold yellow", justify="left")
-        bottom_table.add_column("Value2", style="white", justify="left")
-
-        active_text = "Active: ✅" if (aircraft.is_active) else "Active: ❌"
-        installed_text = "Installed: ✅" if (aircraft.is_installed) else "Installed: ❌"
-        column_text = f"[bold magenta]{aircraft.simulator}[/bold magenta] - {active_text} {installed_text}"
-                        
-        bottom_table.add_row(column_text)
-
 
         # 5. Group
         content_group = Group(
             id_table,
             two_column_section,
-            Text.from_markup("\n[bold cyan]📝 Additional Data[/bold cyan]"),
-            module_metadata_table,
-            bottom_table
+            Text.from_markup("[bold cyan]\nADDITIONAL DATA[/bold cyan]"),
+            module_metadata_table
         )
         
         # Retro Styled Panel
         panel = Panel(
             content_group,
-            title="[bold white on blue] MODULE DETAILS [/bold white on blue]",
+            title="[bold white on blue] AIRCRAFT MODEL DETAILS [/bold white on blue]",
             box=DOUBLE,
             border_style="blue",
-            padding=(1, 2),
+            padding=(1, 1),
         )
 
         self.console.print(panel)

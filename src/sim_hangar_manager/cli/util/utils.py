@@ -6,6 +6,7 @@ aircraft_manufacturers = {
     "AGUSTA": None,
     "AGUSTAWESTLAND": None,
     "AIRBUS": None,
+    "AIRBUS HELICOPTERS": None,
     "ANTONOV": None,
     "AVIAMILANO": None,
     "AVRO": None,

@@ -43,63 +43,69 @@ class ScanView:
 
         self.console.rule("[bold cyan]Aircraft Module Scanner[/bold cyan]")
 
-        # 1. Request Path to scan
-        target_path = inquirer.text(
-            message="Path to scan (e.g. MSFS Community folder path):",
-            qmark="",
-            amark="",
-            validate=lambda result: Path(result).exists() and Path(result).is_dir(),
-            invalid_message="Path is not valid or does not exist.",
-        ).execute()
+        try:
+            # 1. Request Path to scan
+            target_path = inquirer.text(
+                message="Path:",
+                qmark="",
+                amark="",
+                long_instruction="Path to directory where models/modules are installed e.g. MSFS Community folder path. Press CTRL + C to return.",
+                validate=lambda result: Path(result).exists() and Path(result).is_dir(),
+                invalid_message="Path is not valid or does not exist.",
+            ).execute()
 
-        if not target_path:
-            self.console.print("[yellow]No Path entered.[/yellow]")
-            return
+            if not target_path:
+                self.console.print("[yellow]No Path entered.[/yellow]")
+                return
 
-        scan_path = Path(target_path)
+            scan_path = Path(target_path)
 
-        # ask to confirm to skip validation
-        skip_validation = False
-        skip_validation = inquirer.confirm(
-            message="Skip strict aircraft module validation?", 
-            qmark="",
-            amark="",
-            long_instruction="Some aircraft packages are not standard and might not be detected, enabling skip validation, will allow to be scanned.",
-            default=False).execute()
+            # ask to confirm to skip validation
+            skip_validation = False
+            skip_validation = inquirer.confirm(
+                message="Skip strict aircraft module validation?", 
+                qmark="",
+                amark="",
+                long_instruction="Some aircraft packages are not standard and might not be detected, enabling skip validation, will allow to be scanned.",
+                default=False).execute()
 
-        # 2. Start scanning process with Rich's Spinner component
-        detected_modules = self._scan_for_modules(scan_path,skip_validation=skip_validation)
+            # 2. Start scanning process with Rich's Spinner component
+            detected_modules = self._scan_for_modules(scan_path,skip_validation=skip_validation)
 
-        # 3. Select modules to be registered, using Checkbox of InquirePy
-        selected_modules = self._select_modules_to_add(detected_modules)
+            # 3. Select modules to be registered, using Checkbox of InquirePy
+            selected_modules = self._select_modules_to_add(detected_modules)
 
-        if not selected_modules:
-            self.console.print("[yellow]No Modules registered.[/yellow]")
-            return
+            if not selected_modules:
+                self.console.print("[yellow]No Modules registered.[/yellow]")
+                return
 
 
-        # ask to confirm to overwrite
-        dry_run = inquirer.confirm(
-            message="Do you want to skip saving data?", 
-            amark="",
-            qmark="",
-            default=False).execute()
-
-        
-        import_results = None
-        if not dry_run:
             # ask to confirm to overwrite
-            overwrite = inquirer.confirm(
-                message="Do you want to overwrite existing records?", 
+            dry_run = inquirer.confirm(
+                message="Do you want to skip saving data?", 
                 amark="",
                 qmark="",
                 default=False).execute()
 
-            # 4. Import modules to DB
-            import_results = self._save_modules(selected_modules, overwrite)
+            
+            import_results = None
+            if not dry_run:
+                # ask to confirm to overwrite
+                overwrite = inquirer.confirm(
+                    message="Do you want to overwrite existing records?", 
+                    amark="",
+                    qmark="",
+                    default=False).execute()
 
-        else:
-            import_results = ImportResults(total_imported=0, total_skipped=len(selected_modules))
+                # 4. Import modules to DB
+                import_results = self._save_modules(selected_modules, overwrite)
+
+            else:
+                import_results = ImportResults(total_imported=0, total_skipped=len(selected_modules))
+
+        except(KeyboardInterrupt):
+            self.console.clear()
+            return
 
         # 5. Render summary table
         self._render_summary_table(import_results, len(detected_modules), len(selected_modules), True)
@@ -247,9 +253,11 @@ class ScanView:
         if askForConfirm:
             input("Press Enter to return.")
 
+
     def _debug(self, message: str):
         if self.log_console:
             self.log_console.print(f"[ScanView] {message}")
+
 
     def _is_valid_path(self, target_path: Path) -> bool: 
         if not target_path.exists():

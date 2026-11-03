@@ -17,30 +17,35 @@ class SearchAircraftView:
 
     def run(self) -> Optional[AircraftModel]:
         self.console.clear()
-        self.console.rule("[bold cyan]Search and Filter Modules/Addons[/bold cyan]\n")
+        self.console.rule("[bold cyan]Search for Modules/Addons[/bold cyan]\n")
 
         aircraft_modules = self.aircraft_model_service.get_all_aircraft_models(include_inactive=True)
 
-        if not aircraft_modules:
-            self.console.print("[yellow]No Modules Addons registered.[/yellow]\n")
-            inquirer.text(message="Press Enter to go back...").execute()
-            return None
+        try:
+            if not aircraft_modules:
+                self.console.print("[yellow]No Modules Addons registered.[/yellow]\n")
+                inquirer.text(message="Press Enter to go back...").execute()
+                return None
 
-        # Prepare Options to be visible for search
-        choices = [
-            Choice(
-                value=ac,
-                name=f"{ac.name} | ICAO: {ac.icao_code or 'N/A'} | Dev: {ac.developer} | Sim: {ac.simulator}",
-            )
-            for ac in aircraft_modules
-        ]
+            # Prepare Options to be visible for search
+            choices = [
+                Choice(
+                    value=ac,
+                    name=f"{ac.name} | ICAO: {ac.icao_code or 'N/A'} | Dev: {ac.developer} | Sim: {ac.simulator}",
+                )
+                for ac in aircraft_modules
+            ]
 
-        # InquirerPy Fuzzy for real time dynamic search
-        selected_aircraft: AircraftModel = inquirer.fuzzy(
-            message="Type to filter (Name, ICAO, Developer, Simulator):",
-            choices=choices,
-            match_exact=False,
-            transformer=lambda result: f"Selected: {result}" if result else "",
-        ).execute()
+            # InquirerPy Fuzzy for real time dynamic search
+            selected_aircraft: AircraftModel = inquirer.fuzzy(
+                message="Type to filter (Name, ICAO, Developer, Simulator):",
+                choices=choices,
+                match_exact=False,
+                transformer=lambda result: f"Selected: {result}" if result else "",
+            ).execute()
+
+        except(KeyboardInterrupt):
+            self.console.clear()
+            return
 
         return selected_aircraft
