@@ -37,7 +37,7 @@ class ListAircraftModelView():
         Renders a simple table with data
         '''
         if not models or len(models) == 0:
-            self.console.print("[bold yellow]No aircraft modules registered.[/bold yellow]")
+            self.console.print("[bold yellow]No aircraft models registered.[/bold yellow]")
             return
 
         table = Table(
@@ -81,9 +81,11 @@ class ListAircraftModelView():
         """
         Renders a stylized Rich table displaying aircraft models.
         """
+        self.console.rule("[bold cyan]List Aircraft Models/Addons[/bold cyan]\n")
+
         if not models or len(models) == 0:
-            self.console.print("[bold yellow]No aircraft modules registered.[/bold yellow]")
-            inquirer.text(message="Press Enter to return to main menu...", qmark="", amark="").execute()
+            self.console.print("[bold yellow]No aircraft models registered.[/bold yellow]")
+            inquirer.text(message="Press Enter to go back...", qmark="", amark="").execute()
             return
 
         table = Table(

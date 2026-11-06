@@ -17,14 +17,14 @@ class SearchAircraftView:
 
     def run(self) -> Optional[AircraftModel]:
         self.console.clear()
-        self.console.rule("[bold cyan]Search for Modules/Addons[/bold cyan]\n")
+        self.console.rule("[bold cyan]Search for Aircraft Models/Addons[/bold cyan]\n")
 
         aircraft_modules = self.aircraft_model_service.get_all_aircraft_models(include_inactive=True)
 
         try:
             if not aircraft_modules:
-                self.console.print("[yellow]No Modules Addons registered.[/yellow]\n")
-                inquirer.text(message="Press Enter to go back...").execute()
+                self.console.print("[bold yellow]No aircraft models registered.[/bold yellow]\n")
+                inquirer.text(message="Press Enter to go back...",qmark="",amark="",).execute()
                 return None
 
             # Prepare Options to be visible for search
