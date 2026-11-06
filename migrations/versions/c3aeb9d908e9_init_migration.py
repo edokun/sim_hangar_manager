@@ -1,8 +1,8 @@
-"""init schema
+"""init migration
 
-Revision ID: f637ce07452c
+Revision ID: c3aeb9d908e9
 Revises: 
-Create Date: 2026-09-28 16:14:49.808769
+Create Date: 2026-11-07 00:01:13.305113
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f637ce07452c'
+revision: str = 'c3aeb9d908e9'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,26 +25,29 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('module_name', sa.String(length=100), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('variant', sa.String(length=100), nullable=True),
     sa.Column('aircraft_name', sa.String(length=50), nullable=True),
     sa.Column('icao_code', sa.String(length=4), nullable=False),
     sa.Column('manufacturer', sa.String(length=50), nullable=True),
     sa.Column('type', sa.String(length=20), nullable=False),
-    sa.Column('engine_type', sa.String(length=30), nullable=False),
+    sa.Column('engine_type', sa.String(length=30), nullable=True),
+    sa.Column('engine_count', sa.Integer(), nullable=True),
+    sa.Column('engine_variant', sa.String(length=50), nullable=True),
     sa.Column('aircraft_category', sa.String(length=50), nullable=True),
     sa.Column('aircraft_subcategory', sa.String(length=50), nullable=True),
-    sa.Column('simulator', sa.String(length=20), nullable=False),
+    sa.Column('group', sa.String(length=50), nullable=True),
     sa.Column('model_data', sa.String(length=1000), nullable=True),
+    sa.Column('simulator', sa.String(length=20), nullable=False),
     sa.Column('simulator_compatibility', sa.String(length=50), nullable=True),
-    sa.Column('developer', sa.String(length=100), nullable=False),
-    sa.Column('module_type', sa.String(length=100), nullable=True),
-    sa.Column('store', sa.String(length=100), nullable=True),
+    sa.Column('developer', sa.String(length=50), nullable=True),
     sa.Column('developer_url', sa.String(length=100), nullable=True),
+    sa.Column('module_type', sa.String(length=20), nullable=True),
+    sa.Column('store', sa.String(length=50), nullable=True),
     sa.Column('notes', sa.String(length=500), nullable=True),
     sa.Column('rating', sa.Integer(), nullable=True),
-    sa.Column('version', sa.String(length=20), nullable=True),
+    sa.Column('version', sa.String(length=10), nullable=True),
     sa.Column('module_file_location_1', sa.String(length=1000), nullable=True),
     sa.Column('module_file_location_2', sa.String(length=1000), nullable=True),
-    sa.Column('model_metadata', sa.String(length=1000), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('is_installed', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
@@ -55,28 +58,29 @@ def upgrade() -> None:
     op.create_table('aircraft',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('tail_number', sa.String(length=10), nullable=False),
-    sa.Column('aircraft_model_id', sa.Integer(), nullable=False),
-    sa.Column('variant', sa.String(length=50), nullable=True),
-    sa.Column('engine_variant', sa.String(length=50), nullable=True),
-    sa.Column('home_airport', sa.String(length=4), nullable=True),
-    sa.Column('current_location', sa.String(length=4), nullable=True),
-    sa.Column('airframe_hours', sa.Float(), nullable=False),
-    sa.Column('engine_hours', sa.Float(), nullable=False),
+    sa.Column('aircraft_model_id', sa.Integer(), nullable=True),
+    sa.Column('home_airport', sa.String(length=5), nullable=True),
+    sa.Column('current_location', sa.String(length=5), nullable=True),
+    sa.Column('airframe_hours', sa.Float(), nullable=True),
+    sa.Column('engine_hours', sa.Float(), nullable=True),
     sa.Column('last_flight_at', sa.DateTime(), nullable=True),
-    sa.Column('type', sa.String(length=20), nullable=True),
+    sa.Column('role', sa.String(length=20), nullable=True),
     sa.Column('airline_icao', sa.String(length=4), nullable=True),
     sa.Column('airline_name', sa.String(length=100), nullable=True),
+    sa.Column('notes', sa.String(length=300), nullable=True),
     sa.ForeignKeyConstraint(['aircraft_model_id'], ['aircraft_models.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('tail_number')
     )
-    op.create_table('flight_logs',
+    op.create_table('flights',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('aircraft_id', sa.Integer(), nullable=False),
-    sa.Column('flight_date', sa.DateTime(), nullable=False),
-    sa.Column('origin_airport', sa.String(length=4), nullable=False),
-    sa.Column('destination_airport', sa.String(length=4), nullable=False),
-    sa.Column('duration', sa.Integer(), nullable=False),
+    sa.Column('flight_start', sa.DateTime(), nullable=False),
+    sa.Column('flight_end', sa.DateTime(), nullable=False),
+    sa.Column('origin_airport', sa.String(length=5), nullable=True),
+    sa.Column('destination_airport', sa.String(length=5), nullable=True),
+    sa.Column('engine_hours', sa.Float(), nullable=True),
+    sa.Column('airframe_hours', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['aircraft_id'], ['aircraft.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -86,7 +90,7 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_table('flight_logs')
+    op.drop_table('flights')
     op.drop_table('aircraft')
     op.drop_table('aircraft_models')
     # ### end Alembic commands ###
