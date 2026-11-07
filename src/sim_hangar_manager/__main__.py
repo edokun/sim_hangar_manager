@@ -1,7 +1,9 @@
+from rich.console import Console
 from sqlalchemy import text
 
-from sim_hangar_manager.cli.interactive_cli import main_menu
+from sim_hangar_manager.main import bootstrap_application
 
+#from sim_hangar_manager.cli.interactive_cli import main_menu
 #from sim_hangar_manager.database.connection import SessionLocal
 
 
@@ -18,10 +20,11 @@ def init_app():
 
 
 def main():
-    #with console.status("[bold cyan]Loading Sim Hangar Manager...[/bold cyan]",
-    #                    spinner="dots"):
+    #console = Console()
+    #with console.status("[bold cyan]Loading Sim Hangar Manager...[/bold cyan]",spinner="dots"):
     #    init_app()
-    main_menu()
+    interactive_cli = bootstrap_application()
+    interactive_cli.run()
 
 
 if __name__ == "__main__":
